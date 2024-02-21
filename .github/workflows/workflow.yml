@@ -30,7 +30,7 @@ jobs:
   BuildDockerFile:
     needs: NPMbuild
     name: Buidling docker file
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
         - name: checkout repo
           uses: actions/checkout@v2
