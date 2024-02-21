@@ -1,0 +1,100 @@
+name: Node.js CI
+
+on:
+  pull_request:
+      branches:
+        - main
+
+
+jobs:
+  NPMbuild:
+    runs-on: self-hosted
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+         node-version: '20.x'
+    - name: Install dependencies
+      run: npm install
+    - name: Run Build
+      run: npm run build --if-present
+    - name: Run tests
+      run: npm test
+  
+  BuildDockerFile:
+    runs-on: self-hosted
+    steps:
+        - name: checkout repo
+          uses: actions/checkout@v2
+
+        - name: Set up QEMU
+          uses: docker/setup-qemu-action@v1
+      
+        - name: Set up Docker Buildx
+          uses: docker/setup-buildx-action@v1
+
+        - name: Login to DockerHub
+          uses: docker/login-action@v1
+          with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+        - name: Build and push
+          uses: docker/build-push-action@v2
+          with:
+            context: ./
+            file: ./Dockerfile
+            push: true
+            tags: ${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:latest
+
+   ScanDockerfile:
+     runs-on: self-hosted
+     steps:
+       - name: Trivy Scan - Unknown, Low and Medium Severity
+         uses: aquasecurity/trivy-action@0.0.7
+         continue-on-error: true
+         with:
+           image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:latest
+           exit-code: 0
+           severity: LOW,MEDIUM
+       - name: Trivy Scan - High and Critical Severity
+         uses: aquasecurity/trivy-action@0.0.7
+         continue-on-error: true
+         with:
+           image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:latest   
+           exit-code: 1
+           severity: HIGH,CRITICAL
+
+    PushtoACR: 
+      runs-on: self-hosted
+      steps: 
+        - name: Need to login the Azure  
+          uses: azure/login@v1
+          with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+        - name: ACR Login  
+          run: az acr login --name iacacrapfn  --output tsv --query accessToken
+        - name: Tag the image
+          run: docker tag ${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:latest iacacrapfn.azurecr.io/${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:scanned
+        - name: Push the image
+          run: docker push iacacrapfn.azurecr.io/${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:scanned
+
+    K8sdeploy:
+      runs-on : self-hosted
+      steps:
+        - name: Checkout source code 
+          uses: actions/checkout@v3
+        - name: Azure login
+          id: login
+          uses: azure/login@v1.4.3
+          with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+        - name: 'Deploy to AKS'
+          id: deploy-aks
+          run: |
+            az account set --subscription 82df370b-9c42-4c61-ab1e-14e1e84664bb
+            az aks get-credentials --resource-group apfniacdemo --name IacDemoCluster --admin
+            kubelogin convert-kubeconfig -l azurecli
+            kubectl apply -f deployment.yaml
