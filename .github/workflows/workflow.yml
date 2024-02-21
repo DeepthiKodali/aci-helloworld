@@ -19,18 +19,19 @@ jobs:
          node-version: '20.x'
     - name: Install dependencies
       run: |
-           cd apps
+           cd aci-helloworld/apps
            npm install
     - name: Run Build
       run: |
-           cd apps
+           cd aci-helloworld/apps
            npm run build --if-present
     - name: Run tests
       run: |
-           cd apps
+           cd aci-helloworld/apps
            npm test
   
   BuildDockerFile:
+    needs: NPMbuild
     name: Buidling docker file
     runs-on: self-hosted
     steps:
@@ -58,6 +59,7 @@ jobs:
             tags: ${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:latest
 
   ScanDockerfile:
+     needs: BuildDockerFile
      name: Scanning docker file
      runs-on: self-hosted
      steps:
@@ -77,6 +79,7 @@ jobs:
            severity: HIGH,CRITICAL
 
   PushtoACR:
+      needs: ScanDockerFile
       name: Pushing to ACR 
       runs-on: self-hosted
       steps: 
@@ -92,6 +95,7 @@ jobs:
           run: docker push iacacrapfn.azurecr.io/${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:scanned
 
   K8sdeploy:
+      needs: PushtoACR
       name: Deploy to K8s
       runs-on : self-hosted
       steps:
