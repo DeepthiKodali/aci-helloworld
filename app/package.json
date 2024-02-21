@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": { "test"
-     },
+  "scripts": "test",
   "dependencies": {
     "express": "^4.14.0",
     "morgan": "^1.8.2"
