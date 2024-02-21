@@ -8,6 +8,7 @@ on:
 
 jobs:
   NPMbuild:
+    name: NPM Build
     runs-on: self-hosted
 
     steps:
@@ -24,6 +25,7 @@ jobs:
       run: npm test
   
   BuildDockerFile:
+    name: Buidling docker file
     runs-on: self-hosted
     steps:
         - name: checkout repo
@@ -49,7 +51,8 @@ jobs:
             push: true
             tags: ${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:latest
 
-   ScanDockerfile:
+  ScanDockerfile:
+     name: Scanning docker file
      runs-on: self-hosted
      steps:
        - name: Trivy Scan - Unknown, Low and Medium Severity
@@ -67,7 +70,8 @@ jobs:
            exit-code: 1
            severity: HIGH,CRITICAL
 
-    PushtoACR: 
+  PushtoACR:
+      name: Pushing to ACR 
       runs-on: self-hosted
       steps: 
         - name: Need to login the Azure  
@@ -81,7 +85,8 @@ jobs:
         - name: Push the image
           run: docker push iacacrapfn.azurecr.io/${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:scanned
 
-    K8sdeploy:
+  K8sdeploy:
+      name: Deploy to K8s
       runs-on : self-hosted
       steps:
         - name: Checkout source code 
