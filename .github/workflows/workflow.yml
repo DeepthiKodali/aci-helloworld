@@ -109,4 +109,4 @@ jobs:
             az account set --subscription 82df370b-9c42-4c61-ab1e-14e1e84664bb
             az aks get-credentials --resource-group apfniacdemo --name IacDemoCluster --admin
             kubelogin convert-kubeconfig -l azurecli
-            kubectl apply -f deployment.yaml
+            kubectl apply -f deployment.yml
