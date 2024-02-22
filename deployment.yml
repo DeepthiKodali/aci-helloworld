@@ -1,27 +1,17 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Pod
 metadata:
   name: hello-apfn
+
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: hello-apfn
-  template:
-    metadata:
-      labels:
-        app: hello-apfn
-    spec:
-      containers:
-        - image: iacacrapfn.azurecr.io/deepthi2305/nodejs-demo:scanned
-          imagePullPolicy: Always
-          name: ms1-helloapfn
-          ports:
-            - containerPort: 8282
-          env:
-            - name: TITLE
-              value: "Hello APFN"
----
+  containers:
+  - image: iacacrapfn.azurecr.io/deepthi2305/nodejs-demo:scanned
+    imagePullPolicy: Always
+    name: ms1-helloapfn
+    ports:
+    - containerPort: 8282
+      protocol: TCP
+          ---
 apiVersion: v1
 kind: Service
 metadata:
@@ -34,7 +24,10 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-    - port: 8282
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8282
   selector:
     app: hello-apfn
 ---
