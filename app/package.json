@@ -1,16 +1,19 @@
 {
   "name": "aci-helloworld",
+  "type": "module",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "script": {"test" : "jest" },
+  "scripts": {
+    "test": "jest",
+    "start": "node ./index.js"
+  },
   "dependencies": {
     "express": "^4.14.0",
+    "jest": "^29.7.0",
     "morgan": "^1.8.2",
-    "jest": "^26.6.3",
-    "chai": "latest"
+    "supertest": "^6.3.4",
+    "yarn": "^1.22.21"
   },
-  "devDependencies": {},
   "author": ""
-  
 }
