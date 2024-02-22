@@ -14,7 +14,7 @@ spec:
         app: hello-apfn
     spec:
       containers:
-      - image: iacacrapfn.azurecr.io/deepthi2305/nodejs-demo:scanned
+      - image: registry.hub.docker.com/deepthi2305/nodejs-demo:latest
         imagePullPolicy: Always
         name: ms1-helloapfn
         ports:
