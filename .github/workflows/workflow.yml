@@ -28,7 +28,6 @@ jobs:
     - name: Run tests
       run: |
            cd app
-           jest --config='{\"testMatch\":[\"*.js\"],\"passWithNoTests\":true}'
            npm run test
     # - name: Upload coverage to Codecov
     #   uses: codecov/codecov-action@v1
