@@ -17,9 +17,9 @@ kind: Service
 metadata:
   name: hello-apfn
   annotations:
-    service.beta.kubernetes.aio/azure-load-balancer-internal: "true"
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
     service.beta.kubernetes.io/azure-pls-create: "true"
-    service.beta.kubernetes.io/azure-pls-name: hello-apfn   
+    service.beta.kubernetes.io/azure-pls-name: hello-apfn-pls   
     
 spec:
   type: LoadBalancer
