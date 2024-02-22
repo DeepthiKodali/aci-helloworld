@@ -4,5 +4,5 @@ COPY ./app/* /usr/src/app/
 WORKDIR /usr/src/app
 USER node
 RUN npm install
-EXPOSE 3000
+EXPOSE 80
 CMD [ "node",  "index.js" ]
