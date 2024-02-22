@@ -28,7 +28,7 @@ jobs:
     - name: Run tests
       run: |
            cd app
-           npm run tests
+           npm run test
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
    
