@@ -122,7 +122,7 @@ jobs:
             kubelogin convert-kubeconfig -l azurecli
 
         - name: Deploy to AKS - 2
-          id: deploy-aks
+          id: deploy-aks2
           uses: Azure/k8s-deploy@v4
           with:
             namespace: 'default'
