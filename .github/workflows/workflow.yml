@@ -131,3 +131,13 @@ jobs:
             images: 'iacacrapfn.azurecr.io/${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:${{ github.sha }}'
             pull-images: true
             
+        - name: Deploy to AKS - 2
+          id: deploy-aks2
+          uses: Azure/k8s-deploy@v4
+          with:
+              namespace: 'dev2'
+              manifests: |
+                   deployment.yml
+              images: 'iacacrapfn.azurecr.io/${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:${{ github.sha }}'
+              pull-images: true
+              
