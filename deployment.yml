@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-apfn
+  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-apfn
+  template:
+    metadata:
+      labels:
+        app: hello-apfn
+    spec:
+      containers:
+      - image: iacacrapfn.azurecr.io/deepthi2305/nodejs-demo:scanned
+        imagePullPolicy: Always
+        name: ms1-helloapfn
+        ports:
+        - containerPort: 80
+        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-apfn
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+    service.beta.kubernetes.io/azure-pls-create: "true"
+    service.beta.kubernetes.io/azure-pls-name: hello-apfn-pls   
+    
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: hello-apfn
+---
