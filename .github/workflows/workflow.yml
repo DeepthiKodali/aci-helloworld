@@ -114,10 +114,20 @@ jobs:
           uses: azure/login@v1.4.3
           with:
             creds: ${{ secrets.AZURE_CREDENTIALS }}
-        - name: 'Deploy to AKS'
+        - name: Deploy to AKS -1
           id: deploy-aks
           run: |
             az account set --subscription 82df370b-9c42-4c61-ab1e-14e1e84664bb
             az aks get-credentials --resource-group apfniacdemo --name IacDemoCluster --admin
             kubelogin convert-kubeconfig -l azurecli
-            kubectl apply -f deployment.yml
+
+        - name: Deploy to AKS - 2
+          id: deploy-aks
+          uses: Azure/k8s-deploy@v4
+            with:
+              namespace: 'default'
+              manifests: |
+                 deployment.yml
+              images: 'iacacrapfn.azurecr.io/${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:${{ github.sha }}'
+              pull-images: false 
+            
