@@ -124,10 +124,10 @@ jobs:
         - name: Deploy to AKS - 2
           id: deploy-aks
           uses: Azure/k8s-deploy@v4
-            with:
-              namespace: 'default'
-              manifests: |
+          with:
+            namespace: 'default'
+            manifests: |
                  deployment.yml
-              images: 'iacacrapfn.azurecr.io/${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:${{ github.sha }}'
-              pull-images: false 
+            images: 'iacacrapfn.azurecr.io/${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:${{ github.sha }}'
+            pull-images: true
             
