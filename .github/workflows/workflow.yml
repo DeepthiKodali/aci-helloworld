@@ -64,7 +64,7 @@ jobs:
               context: .
               file: Dockerfile
               push: true
-              tags: ${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:latest
+              tags: ${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:${{ github.sha }}
 
   ScanDockerfile:
      needs: BuildDockerFile
@@ -75,14 +75,14 @@ jobs:
          uses: aquasecurity/trivy-action@0.0.7
          continue-on-error: true
          with:
-           image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:latest
+           image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:${{ github.sha }}
            exit-code: 0
            severity: LOW,MEDIUM
        - name: Trivy Scan - High and Critical Severity
          uses: aquasecurity/trivy-action@0.0.7
          continue-on-error: true
          with:
-           image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:latest   
+           image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:${{ github.sha }}  
            exit-code: 1
            severity: HIGH,CRITICAL
 
@@ -98,9 +98,9 @@ jobs:
         - name: ACR Login  
           run: az acr login --name iacacrapfn  --output tsv --query accessToken
         - name: Tag the image
-          run: docker tag ${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:latest iacacrapfn.azurecr.io/${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:scanned
+          run: docker tag ${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:latest iacacrapfn.azurecr.io/${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:${{ github.sha }}
         - name: Push the image
-          run: docker push iacacrapfn.azurecr.io/${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:scanned
+          run: docker push iacacrapfn.azurecr.io/${{ secrets.DOCKERHUB_USERNAME }}/nodejs-demo:${{ github.sha }}
 
   K8sdeploy:
       needs: PushtoACR
